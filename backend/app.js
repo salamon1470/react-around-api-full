@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-
+const cors = require('cors');
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // in 15 minutes
   max: 100 // you can make a maximum of 100 requests from one IP
@@ -23,6 +23,9 @@ const app = express();
 app.use(helmet());
 app.use(limiter);
 app.use(requestLogger);
+app.use(cors());
+app.options('*', cors());
+
 mongoose.connect('mongodb://localhost:27017/aroundb');
 app.use(express.json());
 app.post('/signin', login);
