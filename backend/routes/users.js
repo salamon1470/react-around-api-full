@@ -9,16 +9,10 @@ const {
 } = require('../controllers/users');
 
 
-usersRouter.get('/users',celebrate({
-  avatar: Joi.string().required().custom(validateURL)
-}), getUsers);
-usersRouter.get('/users/:id',celebrate({
-  avatar: Joi.string().required().custom(validateURL)
-}), getUser);
+usersRouter.get('/users', getUsers);
+usersRouter.get('/users/:id', getUser);
 usersRouter.patch('/users/me', updtProf);
-usersRouter.patch('/users/me/avatar', celebrate({
-  avatar: Joi.string().required().custom(validateURL)
-}), updtAvat);
+usersRouter.patch('/users/me/avatar', updtAvat);
 usersRouter.get('/users/me');
 
 module.exports = {

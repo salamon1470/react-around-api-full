@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: 'https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg',
+    default: 'https://www.pictures.s3.yandex.net/resources/avatar_1604080799.jpg',
     validate: {
       validator: (v) => /^((ftp|http|https):\/\/)?(www\.)?([a-z\-0-9\._~:\/?%#\[\]@!$&'()*\+,;=]+)\.([A-z]{2,})([\/a-z]+)?(#)?/gi.test(  // eslint-disable-line
         v,

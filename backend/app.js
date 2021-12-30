@@ -22,7 +22,7 @@ const {
 const { usersRouter } = require('./routes/users');
 
 const { cardsRouter } = require('./routes/cards');
-const auth = require('./middleware/auth');
+const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
