@@ -6,7 +6,9 @@ const cors = require('cors');
 
 const allowedCors = [
   'localhost:3000',
-  'http://api.aroundussg.students.nomoreparties.sbs'
+  'http://api.aroundussg.students.nomoreparties.sbs',
+  'http://www.aroundussg.students.nomoreparties.sbs',
+  'http://aroundussg.students.nomoreparties.sbs'
 ];
 
 const limiter = rateLimit({
