@@ -1,6 +1,33 @@
-# react-around-api-full
-The API of "Around the U.S." with authorization and registration handled by the back-end server.
+# Around The U.S.
 
-This repository contains the full API of "Around the U.S." project that features user authorization and user registration and handles cards and users. Please add to this readme:
-* a link to repository with the complete React application which uses this API;
-* a link to the website that hosts your API.
+### Overview
+
+* About
+* Specs
+* GitPages-link
+
+
+**About**
+
+This website is a platform meant for users to upload their pictures and share them with friends and people all around the world
+
+**Specs**
+
+To make this project i used:
+
+* CSS 3.0
+* HTML 5
+* Responsive Web Design
+* JavaScript
+* Figma
+* React
+* Express
+* Cors
+* Express-winston
+* Helmet
+* Mongoose
+* And more..
+
+**Domain-link**
+
+https://www.aroundussg.students.nomoreparties.sbs/
