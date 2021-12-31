@@ -3,55 +3,59 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { NODE_ENV, JWT_SECRET } = process.env;
+const NotFoundError = require('../errors/not-found-err');
+const NotValidError = require('../errors/not-valid-err');
+const NotAuthenticatedError = require ('../errors/not-authenticated-err');
+const ConflictError = require('../errors/conflict-err');
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .orFail()
     .then((users) => res.send({ data: users }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'Users not found' });
-      } else {
-        res.status(500).send({ message: 'An error has occurred on the server' });
+        throw new NotFoundError('Users not found');
       }
-    });
+    })
+    .catch(next);
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   User.findById(req.params.id)
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Invalid user data' });
+        throw new NotValidError('Invalid user data');
       }
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Invalid user data' });
+        throw new NotValidError('Invalid user data');
       }
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'User not found' });
-      } else {
-        res.status(500).send({ message: 'An error has occurred on the server' });
+        throw new NotFoundError('User not found');
       }
-    });
+    })
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email } = req.body;
   bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({ name, about, avatar,  email, password: hash })
+    .then((res) => User.create({ name, about, avatar, email })
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send(err);
+        throw new NotValidError(err.message);
       }
-      res.status(500).send({ message: 'An error has occurred on the server' });
-    }) )
-
-
+      if (err.name === 'MongoError' ||  err.code === 11000 ) {
+        throw new ConflictError('User already exists');
+      }
+    })
+    .catch(next)
+    )
 };
 
-module.exports.updtProf = (req, res) => {
+module.exports.updtProf = (req, res, next) => {
   const { name, about } = req.body;
   console.log(req.user._id);
   User.findByIdAndUpdate(
@@ -66,20 +70,19 @@ module.exports.updtProf = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Invalid user data' });
+        throw new NotValidError('Invalid user data');
       }
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Invalid user data' });
+        throw new NotValidError('Invalid user data');
       }
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'User not found' });
-      } else {
-        res.status(500).send({ message: 'An error has occurred on the server' });
+        throw new NotFoundError('User not found');
       }
-    });
+    })
+    .catch(next)
 };
 
-module.exports.updtAvat = (req, res) => {
+module.exports.updtAvat = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     '61af547a15d69971d21d5e8c',
@@ -93,17 +96,16 @@ module.exports.updtAvat = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Invalid user data' });
+        throw new NotValidError('Invalid user data');
       }
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Invalid user data' });
+        throw new NotValidError('Invalid user data');
       }
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'User not found' });
-      } else {
-        res.status(500).send({ message: 'An error has occurred on the server' });
+        throw new NotFoundError('User not found');
       }
-    });
+    })
+    .catch(next)
 };
 
 module.exports.login = (req, res) => {
@@ -116,6 +118,6 @@ module.exports.login = (req, res) => {
       })
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+      throw new NotAuthenticatedError(err.message);
+    })
 };

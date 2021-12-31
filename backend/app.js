@@ -27,10 +27,15 @@ const { cardsRouter } = require('./routes/cards');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
+const { celebrate, Joi } = require('celebrate');
+const { validateURL } = require('../middlewares/urlValidator');
+const NotFoundError = require('./errors/not-found-err');
+const NotAuthorizedError = require('./errors/not-authorized-err');
+
 const app = express();
 app.use(helmet());
-app.use(limiter);
 app.use(requestLogger);
+app.use(limiter);
 app.use(cors());
 app.options('*', cors());
 app.use(function(req, res, next) {
@@ -48,14 +53,26 @@ app.get('/crash-test', () => {
     throw new Error('Server will crash now');
   }, 0);
 });
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin',celebrate({
+  body: Joi.object().keys({
+     email: Joi.string().email(),
+      password: Joi.string().required().min(8),
+      avatar: Joi.string().required().custom(validateURL)
+  })
+ }), login);
+app.post('/signup',celebrate({
+  body: Joi.object().keys({
+     email: Joi.string().email(),
+      password: Joi.string().required().min(8),
+      avatar: Joi.string().required().custom(validateURL)
+  })
+ }), createUser);
 
 app.use(errorLogger);
 
 app.use('/',(req, res, next) => {
   if(!auth) {
-    res.status(403).send('User is unauthorized')
+    throw new NotAuthorizedError('User is unauthorized')
   }
   auth
   next();
@@ -63,7 +80,7 @@ app.use('/',(req, res, next) => {
 
 app.use('/',(req, res, next) => {
   if(!auth) {
-    res.status(403).send('User is unauthorized')
+    throw new NotAuthorizedError('User is unauthorized')
   }
   auth
   next();
@@ -71,9 +88,7 @@ app.use('/',(req, res, next) => {
 
 app.use((req, res) => {
   // Invalid request
-  res.status(404).json({
-    message: 'Requested resource not found',
-  });
+  throw new NotFoundError('Requested resource not found');
 });
 
 app.use((err, req, res, next) => {
