@@ -56,7 +56,7 @@ module.exports.delCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .orFail()
     .then((card) => {
-         if( req.user._id === req.owner._id) {
+         if( req.user._id === req.data.owner._id.toString()) {
          res.send({ data: card })
          }
     })

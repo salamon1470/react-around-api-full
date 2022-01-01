@@ -13,7 +13,7 @@ const {
 usersRouter.get('/users', getUsers);
 usersRouter.get('/users/:id',celebrate({
   params: Joi.object().keys({
-    id: Joi.string().alphanum()
+    id: Joi.string().hex()
   }),
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
