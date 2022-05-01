@@ -30,4 +30,4 @@ To make this project i used:
 
 **Domain-link**
 
-https://www.aroundussg.students.nomoreparties.sbs/
+https://www.aroundussg.students.nomoreparties.sbs/ (temporarily unavailable)
